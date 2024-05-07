@@ -36,7 +36,10 @@ def mesh_to_sdf(mesh, query_points, surface_point_method='scan', sign_method='no
     if sign_method == 'normal':
         return point_cloud.get_sdf_in_batches(query_points, use_depth_buffer=False)
     elif sign_method == 'depth':
-        return point_cloud.get_sdf_in_batches(query_points, use_depth_buffer=True, sample_count=sample_point_count)
+        # return point_cloud.get_sdf_in_batches(query_points, use_depth_buffer=True, sample_count=sample_point_count)
+        
+        # https://github.com/marian42/mesh_to_sdf/pull/47/files
+        return point_cloud.get_sdf_in_batches(query_points, use_depth_buffer=True, sample_count=normal_sample_count)
     else:
         raise ValueError('Unknown sign determination method: {:s}'.format(sign_method))
 
