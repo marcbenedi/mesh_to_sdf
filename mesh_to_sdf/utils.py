@@ -4,7 +4,7 @@ import numpy as np
 
 def scale_to_unit_sphere(mesh):
     if isinstance(mesh, trimesh.Scene):
-        mesh = mesh.dump().sum()
+        mesh = mesh.dump(concatenate=True)
 
     vertices = mesh.vertices - mesh.bounding_box.centroid
     distances = np.linalg.norm(vertices, axis=1)
@@ -14,7 +14,7 @@ def scale_to_unit_sphere(mesh):
 
 def scale_to_unit_cube(mesh):
     if isinstance(mesh, trimesh.Scene):
-        mesh = mesh.dump().sum()
+        mesh = mesh.dump(concatenate=True)
 
     vertices = mesh.vertices - mesh.bounding_box.centroid
     vertices *= 2 / np.max(mesh.bounding_box.extents)
@@ -23,11 +23,11 @@ def scale_to_unit_cube(mesh):
 
 # Use get_raster_points.cache_clear() to clear the cache
 @functools.lru_cache(maxsize=4)
-def get_raster_points(voxel_resolution):
+def get_raster_points(voxel_resolution, voxel_min=-1, voxel_max=1):
     points = np.meshgrid(
-        np.linspace(-1, 1, voxel_resolution),
-        np.linspace(-1, 1, voxel_resolution),
-        np.linspace(-1, 1, voxel_resolution)
+        np.linspace(voxel_min, voxel_max, voxel_resolution),
+        np.linspace(voxel_min, voxel_max, voxel_resolution),
+        np.linspace(voxel_min, voxel_max, voxel_resolution)
     )
     points = np.stack(points)
     points = np.swapaxes(points, 1, 2)

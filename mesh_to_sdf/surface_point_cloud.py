@@ -79,8 +79,8 @@ class SurfacePointCloud:
         else:
             return np.concatenate(batches) # distances
 
-    def get_voxels(self, voxel_resolution, use_depth_buffer=False, sample_count=11, pad=False, check_result=False, return_gradients=False):
-        result = self.get_sdf_in_batches(get_raster_points(voxel_resolution), use_depth_buffer, sample_count, return_gradients=return_gradients)
+    def get_voxels(self, voxel_resolution, use_depth_buffer=False, sample_count=11, pad=False, check_result=False, return_gradients=False, voxel_min=-1, voxel_max=1):
+        result = self.get_sdf_in_batches(get_raster_points(voxel_resolution, voxel_min, voxel_max), use_depth_buffer, sample_count, return_gradients=return_gradients)
         if not return_gradients:
             sdf = result
         else:
@@ -106,8 +106,12 @@ class SurfacePointCloud:
         query_points = []
         surface_sample_count = int(number_of_points * 47 / 50) // 2
         surface_points = self.get_random_surface_points(surface_sample_count, use_scans=use_scans)
-        query_points.append(surface_points + np.random.normal(scale=math.sqrt(0.0025), size=(surface_sample_count, 3)))
-        query_points.append(surface_points + np.random.normal(scale=math.sqrt(0.00025), size=(surface_sample_count, 3)))
+        
+        # query_points.append(surface_points + np.random.normal(scale=math.sqrt(0.0025), size=(surface_sample_count, 3)))
+        # query_points.append(surface_points + np.random.normal(scale=math.sqrt(0.00025), size=(surface_sample_count, 3)))
+        
+        query_points.append(surface_points + np.random.normal(scale=0.0025, size=(surface_sample_count, 3)))
+        query_points.append(surface_points + np.random.normal(scale=0.00025, size=(surface_sample_count, 3)))
         
         unit_sphere_sample_count = number_of_points - surface_points.shape[0] * 2
         unit_sphere_points = sample_uniform_points_in_unit_sphere(unit_sphere_sample_count)
